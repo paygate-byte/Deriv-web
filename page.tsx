@@ -1,183 +1,193 @@
+"use client";
+
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
-import Image from "next/image";
+import { BaseLayout } from "~/app/_components/BaseLayout";
 
-export default function Home() {
+export default function UploadBotPage() {
+  const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
+  const [botName, setBotName] = useState("");
+  const [description, setDescription] = useState("");
+  const [file, setFile] = useState<File | null>(null);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      setFile(e.target.files[0]);
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setError("");
+    setSuccess("");
+
+    if (!file) {
+      setError("Please select a file to upload");
+      setIsLoading(false);
+      return;
+    }
+
+    try {
+      // Create a FormData instance
+      const formData = new FormData();
+      formData.append("name", botName);
+      formData.append("description", description);
+      formData.append("file", file);
+
+      // In a real application, you would upload this formData using a fetch request
+      // For now, let's simulate a successful upload
+      setTimeout(() => {
+        setSuccess("Bot uploaded successfully!");
+        setIsLoading(false);
+
+        // Reset form
+        setBotName("");
+        setDescription("");
+        setFile(null);
+
+        // Redirect after a short delay
+        setTimeout(() => {
+          router.push("/admin/bots");
+        }, 2000);
+      }, 1500);
+    } catch (err) {
+      console.error(err);
+      setError("Failed to upload bot. Please try again.");
+      setIsLoading(false);
+    }
+  };
+
   return (
-    <div className="flex flex-col min-h-screen bg-gradient-to-b from-[#080816] to-[#1e1e3f] text-white">
-      {/* Header */}
-      <header className="sticky top-0 z-50 bg-gradient-to-r from-[#080816] to-[#1e1e3f] shadow-md">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Link href="/" className="flex items-center gap-2">
-              <div className="grid grid-cols-4 gap-0.5">
-                {Array.from({ length: 16 }).map((_, index) => (
-                  <div
-                    key={index}
-                    className={`w-1.5 h-1.5 rounded-full ${
-                      // Create gradient colors similar to Deriv logo
-                      index < 4 ? "bg-fuchsia-500" :
-                      index < 8 ? "bg-violet-500" :
-                      index < 12 ? "bg-blue-500" :
-                      "bg-cyan-400"
-                    }`}
-                  />
-                ))}
-              </div>
-              <span className="text-2xl font-bold text-white">deriv</span>
-            </Link>
-            <span className="text-sm text-gray-300 ml-1">Bots Platform</span>
-          </div>
-
-          <div className="flex items-center gap-4">
-            <Link
-              href="/login"
-              className="text-white hover:text-cyan-300 transition-colors"
-            >
-              Log In
-            </Link>
-            <Link
-              href="/register"
-              className="bg-gradient-to-r from-violet-600 to-cyan-400 text-white px-4 py-2 rounded hover:opacity-90 transition-opacity"
-            >
-              Register
-            </Link>
-          </div>
+    <BaseLayout>
+      <div className="container mx-auto px-4 py-8">
+        <div className="mb-6">
+          <Link
+            href="/admin/bots"
+            className="text-cyan-400 hover:underline flex items-center gap-1"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+              <path fillRule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clipRule="evenodd" />
+            </svg>
+            Back to Bots
+          </Link>
         </div>
-      </header>
 
-      {/* Hero Section */}
-      <section className="py-16 md:py-24 flex-grow">
-        <div className="container mx-auto px-4">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-12">
-            <div className="md:w-1/2">
-              <h1 className="text-4xl md:text-5xl font-bold mb-6 text-white">
-                <span className="bg-gradient-to-r from-fuchsia-500 via-blue-500 to-cyan-400 bg-clip-text text-transparent">
-                  Automate
-                </span>{" "}
-                Your Deriv Trading
-              </h1>
-              <p className="text-lg text-gray-300 mb-8">
-                Access our collection of high-performance Deriv trading bots and strategies.
-                Optimize your trading experience with automated solutions crafted by experts.
-              </p>
-              <div className="flex flex-wrap gap-4">
-                <Link
-                  href="/login"
-                  className="bg-gradient-to-r from-violet-600 to-cyan-400 text-white px-6 py-3 rounded-md hover:opacity-90 transition-opacity"
-                >
-                  Get Started
-                </Link>
-                <Link
-                  href="https://chat.whatsapp.com/KsCMCuu5r3RERlnFb4eqcK"
-                  target="_blank"
-                  className="border border-violet-600 text-white px-6 py-3 rounded-md hover:bg-violet-600/10 transition-colors"
-                >
-                  Join WhatsApp Group
-                </Link>
+        <div className="mb-8">
+          <div className="flex items-center gap-2 mb-3">
+            <span className="text-xs px-2 py-0.5 bg-gradient-to-r from-blue-500 to-cyan-400 rounded-full">
+              Admin
+            </span>
+            <h1 className="text-3xl font-bold text-white">
+              Upload New Bot
+            </h1>
+          </div>
+          <p className="text-gray-300">
+            Upload a new trading bot to make available to your users.
+          </p>
+        </div>
+
+        <div className="max-w-2xl mx-auto">
+          <div className="bg-[#151530] p-6 rounded-xl border border-white/10">
+            {error && (
+              <div className="mb-4 p-3 bg-red-500/10 border border-red-500/30 rounded text-red-500 text-sm">
+                {error}
               </div>
-            </div>
-            <div className="md:w-1/2">
-              <div className="relative w-full h-[400px]">
-                <div className="absolute inset-0 bg-gradient-to-r from-fuchsia-500/20 via-blue-500/20 to-cyan-400/20 rounded-xl blur-lg"></div>
-                <div className="relative z-10 w-full h-full bg-[#0a0a20] rounded-xl overflow-hidden border border-white/10 p-4">
-                  <div className="bg-[#0a0a20] rounded-md p-2 mb-4 flex items-center gap-2 border-b border-white/10">
-                    <div className="flex gap-1">
-                      <div className="w-2 h-2 rounded-full bg-red-500"></div>
-                      <div className="w-2 h-2 rounded-full bg-yellow-500"></div>
-                      <div className="w-2 h-2 rounded-full bg-green-500"></div>
-                    </div>
-                    <div className="text-xs text-gray-400">Deriv Bot Dashboard</div>
-                  </div>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div className="col-span-2 bg-gradient-to-b from-[#151530] to-[#1e1e3f] p-3 rounded-md">
-                      <div className="mb-2 text-xs text-cyan-400">EUR/USD Chart</div>
-                      <div className="h-40 w-full relative">
-                        {/* Simulated chart */}
-                        <svg className="w-full h-full" viewBox="0 0 100 40">
-                          <path
-                            d="M0,20 L5,18 L10,22 L15,15 L20,17 L25,13 L30,20 L35,18 L40,25 L45,20 L50,15 L55,19 L60,16 L65,13 L70,18 L75,14 L80,20 L85,18 L90,23 L95,16 L100,14"
-                            fill="none"
-                            stroke="#60a5fa"
-                            strokeWidth="1"
-                          />
-                        </svg>
-                        <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-[#1e1e3f] to-transparent"></div>
-                      </div>
-                    </div>
-                    <div className="flex flex-col gap-2">
-                      <div className="bg-[#151530] p-3 rounded-md">
-                        <div className="mb-1 text-xs text-gray-400">Bot Status</div>
-                        <div className="text-green-400 flex items-center gap-1">
-                          <span className="w-2 h-2 rounded-full bg-green-400"></span>
-                          Running
-                        </div>
-                      </div>
-                      <div className="bg-[#151530] p-3 rounded-md">
-                        <div className="mb-1 text-xs text-gray-400">Profit Today</div>
-                        <div className="text-green-400">+$128.45</div>
-                      </div>
-                      <div className="bg-[#151530] p-3 rounded-md">
-                        <div className="mb-1 text-xs text-gray-400">Total Trades</div>
-                        <div className="text-white">24</div>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="mt-4 bg-[#151530] p-3 rounded-md">
-                    <div className="text-xs text-gray-400 mb-2">Recent Activity</div>
-                    <div className="space-y-2">
-                      <div className="flex justify-between text-xs">
-                        <span>EUR/USD</span>
-                        <span className="text-green-400">+$12.50</span>
-                      </div>
-                      <div className="flex justify-between text-xs">
-                        <span>GBP/JPY</span>
-                        <span className="text-red-400">-$5.25</span>
-                      </div>
-                      <div className="flex justify-between text-xs">
-                        <span>BTC/USD</span>
-                        <span className="text-green-400">+$34.10</span>
-                      </div>
-                    </div>
-                  </div>
+            )}
+
+            {success && (
+              <div className="mb-4 p-3 bg-green-500/10 border border-green-500/30 rounded text-green-500 text-sm">
+                {success}
+              </div>
+            )}
+
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div>
+                <label htmlFor="botName" className="block text-white mb-2">
+                  Bot Name
+                </label>
+                <input
+                  id="botName"
+                  type="text"
+                  value={botName}
+                  onChange={(e) => setBotName(e.target.value)}
+                  className="w-full p-3 bg-[#1a1a40] border border-white/10 rounded-md text-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="Enter bot name"
+                  required
+                />
+              </div>
+
+              <div>
+                <label htmlFor="description" className="block text-white mb-2">
+                  Description
+                </label>
+                <textarea
+                  id="description"
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  className="w-full p-3 bg-[#1a1a40] border border-white/10 rounded-md text-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 min-h-32"
+                  placeholder="Enter a detailed description of the bot, its strategy, and usage instructions"
+                  required
+                ></textarea>
+              </div>
+
+              <div>
+                <label htmlFor="file" className="block text-white mb-2">
+                  Bot File
+                </label>
+                <div className="border-2 border-dashed border-white/20 rounded-md p-6 text-center">
+                  <input
+                    id="file"
+                    type="file"
+                    onChange={handleFileChange}
+                    className="hidden"
+                    accept=".zip,.xml,.json,.js"
+                    required
+                  />
+                  <label
+                    htmlFor="file"
+                    className="cursor-pointer flex flex-col items-center justify-center gap-2"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                    </svg>
+                    {file ? (
+                      <span className="text-cyan-400">{file.name}</span>
+                    ) : (
+                      <>
+                        <span className="text-white font-medium">Click to upload bot file</span>
+                        <span className="text-sm text-gray-400">Support for ZIP, XML, JSON, and JS files</span>
+                      </>
+                    )}
+                  </label>
                 </div>
               </div>
-            </div>
+
+              <div className="flex justify-end gap-4 mt-8">
+                <Link
+                  href="/admin/bots"
+                  className="px-6 py-3 border border-white/20 rounded-md text-white hover:bg-white/5 transition-colors"
+                >
+                  Cancel
+                </Link>
+                <button
+                  type="submit"
+                  disabled={isLoading}
+                  className={`px-6 py-3 bg-gradient-to-r from-blue-600 to-cyan-500 text-white rounded-md font-medium hover:opacity-90 transition-opacity ${
+                    isLoading ? "opacity-70 cursor-not-allowed" : ""
+                  }`}
+                >
+                  {isLoading ? "Uploading..." : "Upload Bot"}
+                </button>
+              </div>
+            </form>
           </div>
         </div>
-      </section>
-
-      {/* WhatsApp CTA */}
-      <section className="py-12 bg-gradient-to-r from-green-600 to-green-700">
-        <div className="container mx-auto px-4">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-8">
-            <div>
-              <h2 className="text-2xl md:text-3xl font-bold text-white mb-4">
-                Join Our WhatsApp Community
-              </h2>
-              <p className="text-green-100 max-w-xl">
-                Get instant access to updates, trading signals, and connect with other traders. Our WhatsApp group provides real-time support and insights.
-              </p>
-            </div>
-            <Link
-              href="https://chat.whatsapp.com/KsCMCuu5r3RERlnFb4eqcK"
-              target="_blank"
-              className="bg-white text-green-700 px-6 py-3 rounded-md font-medium hover:bg-green-100 transition-colors flex items-center gap-2"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
-                <path d="M12.001 2C6.47813 2 2.00098 6.47715 2.00098 12C2.00098 13.5829 2.38913 15.1262 3.10078 16.4966L2.0737 21.2058C2.02864 21.3756 2.04158 21.5547 2.10958 21.7162C2.24269 22.0967 2.6334 22.3296 3.0139 22.1965L7.73461 20.5021C9.08754 21.1762 10.5348 21.5 12.001 21.5C17.5238 21.5 22.001 17.0229 22.001 11.5C22.001 5.97715 17.5238 2 12.001 2ZM12.001 20C10.6617 20 9.34172 19.6918 8.16871 19.0993C8.05985 19.0419 7.93764 19.0137 7.8158 19.0181L4.17504 20.2154L4.88511 16.5894C4.91165 16.4222 4.87594 16.2508 4.78356 16.1077C4.16508 14.9328 3.80098 13.599 3.80098 12.2222C3.80098 7.45388 7.56599 3.77778 12.001 3.77778C16.4359 3.77778 20.201 7.45388 20.201 12.2222C20.201 16.9905 16.4359 20.6667 12.001 20.6667V20Z" />
-              </svg>
-              Join WhatsApp Group Now
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* Footer */}
-      <footer className="bg-[#080816] py-8 text-gray-400">
-        <div className="container mx-auto px-4 text-center">
-          <p className="text-sm">&copy; {new Date().getFullYear()} Deriv Bots Platform. All rights reserved.</p>
-        </div>
-      </footer>
-    </div>
+      </div>
+    </BaseLayout>
   );
 }
