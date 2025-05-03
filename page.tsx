@@ -1,9 +1,8 @@
 import { redirect } from "next/navigation";
-import Link from "next/link";
 import { BaseLayout } from "~/app/_components/BaseLayout";
 import { auth } from "~/server/auth";
 
-export default async function AdminDashboardPage() {
+export default async function DashboardPage() {
   const session = await auth();
 
   // Redirect to login if not authenticated
@@ -11,249 +10,164 @@ export default async function AdminDashboardPage() {
     redirect("/login");
   }
 
-  // Redirect to dashboard if not admin
-  if (!session.user.isAdmin) {
-    redirect("/dashboard");
-  }
+  const isAdmin = session.user.isAdmin;
 
   return (
     <BaseLayout>
       <div className="container mx-auto px-4 py-8">
         <div className="mb-8">
-          <div className="flex items-center gap-2 mb-3">
-            <span className="text-xs px-2 py-0.5 bg-gradient-to-r from-violet-600 to-cyan-500 rounded-full">
-              Admin
-            </span>
-            <h1 className="text-3xl font-bold text-white">
-              Administrator Dashboard
-            </h1>
-          </div>
+          <h1 className="text-3xl font-bold text-white mb-2">
+            Welcome, {session.user.name || session.user.email?.split("@")[0] || "User"}
+          </h1>
           <p className="text-gray-300">
-            Manage your Deriv bots platform, upload content, and track usage.
+            Manage your downloads and access Deriv trading resources.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
-          <div className="bg-gradient-to-b from-purple-900/40 to-indigo-900/40 p-6 rounded-xl border border-purple-500/30">
-            <div className="mb-4">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-              </svg>
-            </div>
-            <h2 className="text-xl font-semibold text-white mb-1">Users</h2>
-            <p className="text-gray-400 text-sm mb-4">
-              Manage user accounts and permissions.
+        {isAdmin && (
+          <div className="mb-8 p-4 bg-gradient-to-r from-purple-900/40 to-indigo-900/40 rounded-lg border border-purple-500/30">
+            <h2 className="text-xl font-semibold text-white mb-2 flex items-center gap-2">
+              <span className="text-xs px-2 py-0.5 bg-gradient-to-r from-violet-600 to-cyan-500 rounded-full">
+                Admin
+              </span>
+              Administrator Access
+            </h2>
+            <p className="text-gray-300 mb-4">
+              You have administrator privileges. You can manage users, upload bots, and add strategy PDFs.
             </p>
-            <div className="flex justify-between items-center">
-              <span className="text-2xl font-bold text-white">0</span>
-              <Link
-                href="/admin/users"
-                className="text-indigo-300 hover:text-indigo-200 transition-colors"
-              >
-                Manage
-              </Link>
+            <a
+              href="/admin"
+              className="inline-block px-4 py-2 bg-gradient-to-r from-violet-600 to-indigo-600 text-white rounded-md hover:opacity-90 transition-opacity"
+            >
+              Go to Admin Dashboard
+            </a>
+          </div>
+        )}
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+          <div className="bg-[#151530] p-6 rounded-xl border border-white/10">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-xl font-semibold text-white">My Downloads</h2>
+              <span className="text-2xl font-bold text-cyan-400">0</span>
             </div>
+            <p className="text-gray-400 mb-4">
+              Track and manage your downloaded bots and strategy files.
+            </p>
+            <a
+              href="/dashboard/downloads"
+              className="text-cyan-400 hover:underline flex items-center gap-1"
+            >
+              View Downloads
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clipRule="evenodd" />
+              </svg>
+            </a>
           </div>
 
-          <div className="bg-gradient-to-b from-blue-900/40 to-cyan-900/40 p-6 rounded-xl border border-blue-500/30">
-            <div className="mb-4">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
-              </svg>
+          <div className="bg-[#151530] p-6 rounded-xl border border-white/10">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-xl font-semibold text-white">Trading Bots</h2>
+              <span className="text-sm px-2 py-1 bg-violet-500/20 text-violet-300 rounded-full">
+                Latest
+              </span>
             </div>
-            <h2 className="text-xl font-semibold text-white mb-1">Bots</h2>
-            <p className="text-gray-400 text-sm mb-4">
-              Manage and upload trading bots.
+            <p className="text-gray-400 mb-4">
+              Explore our collection of automated trading bots for Deriv.
             </p>
-            <div className="flex justify-between items-center">
-              <span className="text-2xl font-bold text-white">0</span>
-              <Link
-                href="/admin/bots"
-                className="text-cyan-300 hover:text-cyan-200 transition-colors"
-              >
-                Manage
-              </Link>
-            </div>
+            <a
+              href="/bots"
+              className="text-cyan-400 hover:underline flex items-center gap-1"
+            >
+              Browse Bots
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clipRule="evenodd" />
+              </svg>
+            </a>
           </div>
 
-          <div className="bg-gradient-to-b from-fuchsia-900/40 to-pink-900/40 p-6 rounded-xl border border-fuchsia-500/30">
-            <div className="mb-4">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-fuchsia-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-              </svg>
+          <div className="bg-[#151530] p-6 rounded-xl border border-white/10">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-xl font-semibold text-white">Strategies</h2>
+              <span className="text-sm px-2 py-1 bg-cyan-500/20 text-cyan-300 rounded-full">
+                PDF Guides
+              </span>
             </div>
-            <h2 className="text-xl font-semibold text-white mb-1">Strategies</h2>
-            <p className="text-gray-400 text-sm mb-4">
-              Upload and manage PDF strategies.
+            <p className="text-gray-400 mb-4">
+              Access detailed PDF guides with proven trading strategies.
             </p>
-            <div className="flex justify-between items-center">
-              <span className="text-2xl font-bold text-white">0</span>
-              <Link
-                href="/admin/strategies"
-                className="text-pink-300 hover:text-pink-200 transition-colors"
-              >
-                Manage
-              </Link>
-            </div>
-          </div>
-
-          <div className="bg-gradient-to-b from-emerald-900/40 to-teal-900/40 p-6 rounded-xl border border-emerald-500/30">
-            <div className="mb-4">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+            <a
+              href="/strategies"
+              className="text-cyan-400 hover:underline flex items-center gap-1"
+            >
+              View Strategies
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clipRule="evenodd" />
               </svg>
-            </div>
-            <h2 className="text-xl font-semibold text-white mb-1">Analytics</h2>
-            <p className="text-gray-400 text-sm mb-4">
-              View download statistics and usage data.
-            </p>
-            <div className="flex justify-between items-center">
-              <span className="text-2xl font-bold text-white">0</span>
-              <Link
-                href="/admin/analytics"
-                className="text-emerald-300 hover:text-emerald-200 transition-colors"
-              >
-                View
-              </Link>
-            </div>
+            </a>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
-          <div className="bg-[#151530] p-6 rounded-xl border border-white/10">
-            <h2 className="text-xl font-semibold text-white mb-4">Quick Actions</h2>
-            <div className="grid grid-cols-1 gap-4">
-              <Link
-                href="/admin/bots/upload"
-                className="flex items-center gap-3 p-3 bg-[#1a1a40] rounded-lg hover:bg-[#1a1a50] transition-colors"
-              >
-                <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-cyan-400 rounded-lg flex items-center justify-center text-white">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
-                  </svg>
-                </div>
-                <div>
-                  <h3 className="text-white font-medium">Upload Bot</h3>
-                  <p className="text-gray-400 text-sm">Add a new trading bot to the platform</p>
-                </div>
-              </Link>
+        <div className="mb-10">
+          <h2 className="text-2xl font-bold text-white mb-6">Recently Added</h2>
 
-              <Link
-                href="/admin/strategies/upload"
-                className="flex items-center gap-3 p-3 bg-[#1a1a40] rounded-lg hover:bg-[#1a1a50] transition-colors"
-              >
-                <div className="w-10 h-10 bg-gradient-to-br from-fuchsia-500 to-violet-600 rounded-lg flex items-center justify-center text-white">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
-                  </svg>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="bg-[#151530] p-6 rounded-xl border border-white/10 flex gap-4">
+              <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-cyan-400 rounded-lg flex items-center justify-center text-white">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
+                </svg>
+              </div>
+              <div className="flex-1">
+                <h3 className="text-lg font-semibold text-white mb-1">Martingale Strategy Bot</h3>
+                <p className="text-gray-400 text-sm mb-3">
+                  Automated bot implementing the Martingale strategy for consistent profits.
+                </p>
+                <div className="flex items-center justify-between">
+                  <span className="text-xs text-gray-500">Added 2 days ago</span>
+                  <a href="/bots/martingale" className="text-cyan-400 hover:underline text-sm">View Details</a>
                 </div>
-                <div>
-                  <h3 className="text-white font-medium">Upload PDF Strategy</h3>
-                  <p className="text-gray-400 text-sm">Add a new strategy guide to the platform</p>
-                </div>
-              </Link>
-
-              <Link
-                href="/admin/users/manage"
-                className="flex items-center gap-3 p-3 bg-[#1a1a40] rounded-lg hover:bg-[#1a1a50] transition-colors"
-              >
-                <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-lg flex items-center justify-center text-white">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                  </svg>
-                </div>
-                <div>
-                  <h3 className="text-white font-medium">Manage Users</h3>
-                  <p className="text-gray-400 text-sm">View and manage user permissions</p>
-                </div>
-              </Link>
+              </div>
             </div>
-          </div>
 
-          <div className="bg-[#151530] p-6 rounded-xl border border-white/10">
-            <h2 className="text-xl font-semibold text-white mb-4">Recent Activity</h2>
-            <div className="space-y-4">
-              <div className="flex items-center gap-3 p-3 bg-[#1a1a40] rounded-lg">
-                <div className="w-10 h-10 bg-blue-900/30 rounded-lg flex items-center justify-center text-blue-400">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                  </svg>
-                </div>
-                <div className="flex-1">
-                  <h3 className="text-white font-medium text-sm">Admin Account Created</h3>
-                  <p className="text-gray-400 text-xs">Initial admin account set up successfully</p>
-                </div>
-                <span className="text-gray-500 text-xs">Just now</span>
+            <div className="bg-[#151530] p-6 rounded-xl border border-white/10 flex gap-4">
+              <div className="w-16 h-16 bg-gradient-to-br from-fuchsia-500 to-violet-600 rounded-lg flex items-center justify-center text-white">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
               </div>
-
-              <div className="flex items-center gap-3 p-3 bg-[#1a1a40] rounded-lg">
-                <div className="w-10 h-10 bg-purple-900/30 rounded-lg flex items-center justify-center text-purple-400">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
-                  </svg>
+              <div className="flex-1">
+                <h3 className="text-lg font-semibold text-white mb-1">Grid Trading Strategy Guide</h3>
+                <p className="text-gray-400 text-sm mb-3">
+                  Comprehensive PDF guide on implementing grid trading strategies on Deriv.
+                </p>
+                <div className="flex items-center justify-between">
+                  <span className="text-xs text-gray-500">Added 5 days ago</span>
+                  <a href="/strategies/grid-trading" className="text-cyan-400 hover:underline text-sm">View Details</a>
                 </div>
-                <div className="flex-1">
-                  <h3 className="text-white font-medium text-sm">Admin Logged In</h3>
-                  <p className="text-gray-400 text-xs">Admin user accessed the dashboard</p>
-                </div>
-                <span className="text-gray-500 text-xs">1 min ago</span>
-              </div>
-
-              <div className="flex items-center gap-3 p-3 bg-[#1a1a40] rounded-lg">
-                <div className="w-10 h-10 bg-cyan-900/30 rounded-lg flex items-center justify-center text-cyan-400">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-                  </svg>
-                </div>
-                <div className="flex-1">
-                  <h3 className="text-white font-medium text-sm">System Initialized</h3>
-                  <p className="text-gray-400 text-xs">Deriv Bots Platform has been created</p>
-                </div>
-                <span className="text-gray-500 text-xs">5 mins ago</span>
               </div>
             </div>
           </div>
         </div>
 
-        <div className="bg-[#151530] p-6 rounded-xl border border-white/10 mb-10">
-          <h2 className="text-xl font-semibold text-white mb-6">Admin Quick Links</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <Link
-              href="/admin/bots"
-              className="p-4 bg-[#1a1a40] rounded-lg hover:bg-[#1a1a50] transition-colors text-center"
+        <div className="bg-gradient-to-r from-green-600 to-green-700 rounded-xl p-6">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+            <div>
+              <h2 className="text-xl font-bold text-white mb-2">Join Our WhatsApp Community</h2>
+              <p className="text-green-100 mb-4 md:mb-0">
+                Connect with other traders, get real-time signals, and receive support from our experts.
+              </p>
+            </div>
+            <a
+              href="https://chat.whatsapp.com/KsCMCuu5r3RERlnFb4eqcK"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bg-white text-green-700 px-6 py-3 rounded-md font-medium hover:bg-green-100 transition-colors whitespace-nowrap flex items-center gap-2"
             >
-              Manage All Bots
-            </Link>
-            <Link
-              href="/admin/strategies"
-              className="p-4 bg-[#1a1a40] rounded-lg hover:bg-[#1a1a50] transition-colors text-center"
-            >
-              Manage All Strategies
-            </Link>
-            <Link
-              href="/admin/users"
-              className="p-4 bg-[#1a1a40] rounded-lg hover:bg-[#1a1a50] transition-colors text-center"
-            >
-              User Management
-            </Link>
-            <Link
-              href="/admin/settings"
-              className="p-4 bg-[#1a1a40] rounded-lg hover:bg-[#1a1a50] transition-colors text-center"
-            >
-              Platform Settings
-            </Link>
-            <Link
-              href="/admin/analytics"
-              className="p-4 bg-[#1a1a40] rounded-lg hover:bg-[#1a1a50] transition-colors text-center"
-            >
-              Analytics Dashboard
-            </Link>
-            <Link
-              href="/dashboard"
-              className="p-4 bg-[#1a1a40] rounded-lg hover:bg-[#1a1a50] transition-colors text-center"
-            >
-              Return to User Dashboard
-            </Link>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
+                <path d="M12.001 2C6.47813 2 2.00098 6.47715 2.00098 12C2.00098 13.5829 2.38913 15.1262 3.10078 16.4966L2.0737 21.2058C2.02864 21.3756 2.04158 21.5547 2.10958 21.7162C2.24269 22.0967 2.6334 22.3296 3.0139 22.1965L7.73461 20.5021C9.08754 21.1762 10.5348 21.5 12.001 21.5C17.5238 21.5 22.001 17.0229 22.001 11.5C22.001 5.97715 17.5238 2 12.001 2ZM12.001 20C10.6617 20 9.34172 19.6918 8.16871 19.0993C8.05985 19.0419 7.93764 19.0137 7.8158 19.0181L4.17504 20.2154L4.88511 16.5894C4.91165 16.4222 4.87594 16.2508 4.78356 16.1077C4.16508 14.9328 3.80098 13.599 3.80098 12.2222C3.80098 7.45388 7.56599 3.77778 12.001 3.77778C16.4359 3.77778 20.201 7.45388 20.201 12.2222C20.201 16.9905 16.4359 20.6667 12.001 20.6667V20Z" />
+              </svg>
+              Join WhatsApp Group
+            </a>
           </div>
         </div>
       </div>
