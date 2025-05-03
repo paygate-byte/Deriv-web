@@ -1,0 +1,330 @@
+import fs from 'fs';
+import path from 'path';
+
+// Create deploy directory
+const deployDir = path.join(process.cwd(), 'deploy');
+if (!fs.existsSync(deployDir)) {
+  fs.mkdirSync(deployDir);
+}
+
+// Create a coming soon landing page
+const landingPageHTML = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Deriv Bots Platform - Coming Soon</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background: linear-gradient(to bottom, #080816, #1e1e3f);
+      color: white;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      background: linear-gradient(to right, #080816, #1e1e3f);
+      padding: 1rem;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .header-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .logo-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 2px;
+    }
+
+    .logo-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+    }
+
+    .dot-1 { background-color: #d946ef; }
+    .dot-2 { background-color: #c026d3; }
+    .dot-3 { background-color: #a855f7; }
+    .dot-4 { background-color: #8b5cf6; }
+    .dot-5 { background-color: #c026d3; }
+    .dot-6 { background-color: #a855f7; }
+    .dot-7 { background-color: #8b5cf6; }
+    .dot-8 { background-color: #6366f1; }
+    .dot-9 { background-color: #a855f7; }
+    .dot-10 { background-color: #8b5cf6; }
+    .dot-11 { background-color: #6366f1; }
+    .dot-12 { background-color: #3b82f6; }
+    .dot-13 { background-color: #8b5cf6; }
+    .dot-14 { background-color: #6366f1; }
+    .dot-15 { background-color: #3b82f6; }
+    .dot-16 { background-color: #22d3ee; }
+
+    .logo-text {
+      font-size: 1.5rem;
+      font-weight: bold;
+    }
+
+    .subtitle {
+      font-size: 0.875rem;
+      color: #d1d5db;
+      margin-left: 0.25rem;
+    }
+
+    .auth-buttons {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+    }
+
+    .login-btn {
+      color: white;
+      text-decoration: none;
+    }
+
+    .login-btn:hover {
+      color: #22d3ee;
+    }
+
+    .register-btn {
+      background: linear-gradient(to right, #7c3aed, #22d3ee);
+      color: white;
+      padding: 0.5rem 1rem;
+      border-radius: 0.375rem;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .register-btn:hover {
+      opacity: 0.9;
+    }
+
+    main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+      text-align: center;
+    }
+
+    .hero {
+      max-width: 800px;
+      margin-bottom: 2rem;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+    }
+
+    h1 span {
+      background: linear-gradient(to right, #d946ef, #3b82f6, #22d3ee);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    p {
+      font-size: 1.125rem;
+      color: #d1d5db;
+      margin-bottom: 2rem;
+      line-height: 1.7;
+    }
+
+    .actions {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .primary-btn {
+      background: linear-gradient(to right, #7c3aed, #22d3ee);
+      color: white;
+      padding: 0.75rem 1.5rem;
+      border-radius: 0.375rem;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .primary-btn:hover {
+      opacity: 0.9;
+    }
+
+    .secondary-btn {
+      border: 1px solid #7c3aed;
+      color: white;
+      padding: 0.75rem 1.5rem;
+      border-radius: 0.375rem;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .secondary-btn:hover {
+      background-color: rgba(124, 58, 237, 0.1);
+    }
+
+    .whatsapp-banner {
+      width: 100%;
+      background: linear-gradient(to right, #059669, #047857);
+      padding: 1.5rem;
+      border-radius: 0.5rem;
+      margin-top: 3rem;
+      max-width: 800px;
+    }
+
+    .whatsapp-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .whatsapp-btn {
+      background-color: white;
+      color: #059669;
+      padding: 0.75rem 1.5rem;
+      border-radius: 0.375rem;
+      text-decoration: none;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .whatsapp-btn:hover {
+      background-color: #f9fafb;
+    }
+
+    footer {
+      background-color: #080816;
+      padding: 2rem;
+      text-align: center;
+    }
+
+    .footer-content {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .copyright {
+      color: #9ca3af;
+      font-size: 0.875rem;
+    }
+
+    @media (max-width: 640px) {
+      .header-content {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+      }
+
+      .auth-buttons {
+        width: 100%;
+        justify-content: space-between;
+      }
+
+      h1 {
+        font-size: 2rem;
+      }
+
+      .actions {
+        flex-direction: column;
+      }
+
+      .whatsapp-content {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-content">
+      <div class="logo">
+        <div class="logo-grid">
+          <div class="logo-dot dot-1"></div>
+          <div class="logo-dot dot-2"></div>
+          <div class="logo-dot dot-3"></div>
+          <div class="logo-dot dot-4"></div>
+          <div class="logo-dot dot-5"></div>
+          <div class="logo-dot dot-6"></div>
+          <div class="logo-dot dot-7"></div>
+          <div class="logo-dot dot-8"></div>
+          <div class="logo-dot dot-9"></div>
+          <div class="logo-dot dot-10"></div>
+          <div class="logo-dot dot-11"></div>
+          <div class="logo-dot dot-12"></div>
+          <div class="logo-dot dot-13"></div>
+          <div class="logo-dot dot-14"></div>
+          <div class="logo-dot dot-15"></div>
+          <div class="logo-dot dot-16"></div>
+        </div>
+        <span class="logo-text">deriv</span>
+        <span class="subtitle">Bots Platform</span>
+      </div>
+
+      <div class="auth-buttons">
+        <a href="#" class="login-btn">Log in</a>
+        <a href="#" class="register-btn">Register</a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="hero">
+      <h1><span>Automate</span> Your Deriv Trading</h1>
+      <p>Our platform is currently under development. Soon you'll have access to our collection of high-performance Deriv trading bots and strategies. Optimize your trading experience with automated solutions crafted by experts.</p>
+
+      <div class="actions">
+        <a href="#" class="primary-btn">Get Notified When We Launch</a>
+        <a href="https://chat.whatsapp.com/KsCMCuu5r3RERlnFb4eqcK" target="_blank" class="secondary-btn">Learn More</a>
+      </div>
+    </div>
+
+    <div class="whatsapp-banner">
+      <div class="whatsapp-content">
+        <h2>Join Our WhatsApp Community</h2>
+        <p>Get instant access to updates, trading signals, and connect with other traders. Our WhatsApp group provides real-time support and insights.</p>
+        <a href="https://chat.whatsapp.com/KsCMCuu5r3RERlnFb4eqcK" target="_blank" class="whatsapp-btn">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12.001 2C6.47813 2 2.00098 6.47715 2.00098 12C2.00098 13.5829 2.38913 15.1262 3.10078 16.4966L2.0737 21.2058C2.02864 21.3756 2.04158 21.5547 2.10958 21.7162C2.24269 22.0967 2.6334 22.3296 3.0139 22.1965L7.73461 20.5021C9.08754 21.1762 10.5348 21.5 12.001 21.5C17.5238 21.5 22.001 17.0229 22.001 11.5C22.001 5.97715 17.5238 2 12.001 2ZM12.001 20C10.6617 20 9.34172 19.6918 8.16871 19.0993C8.05985 19.0419 7.93764 19.0137 7.8158 19.0181L4.17504 20.2154L4.88511 16.5894C4.91165 16.4222 4.87594 16.2508 4.78356 16.1077C4.16508 14.9328 3.80098 13.599 3.80098 12.2222C3.80098 7.45388 7.56599 3.77778 12.001 3.77778C16.4359 3.77778 20.201 7.45388 20.201 12.2222C20.201 16.9905 16.4359 20.6667 12.001 20.6667V20Z"></path>
+          </svg>
+          Join WhatsApp Group
+        </a>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <div class="footer-content">
+      <p class="copyright">&copy; ${new Date().getFullYear()} Deriv Bots Platform. All rights reserved.</p>
+    </div>
+  </footer>
+</body>
+</html>`;
+
+// Write the HTML file
+fs.writeFileSync(path.join(deployDir, 'index.html'), landingPageHTML);
+
+console.log('Static landing page created in deploy directory.');
